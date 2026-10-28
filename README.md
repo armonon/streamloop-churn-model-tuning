@@ -1,23 +1,32 @@
-# Python Hello
+# StreamLoop — tuning the churn model
 
-The most basic boilerplate to start a Python project at 4Geeks is to start your very first Python project from scratch.
+This project completes the 4Geeks hyperparameter-tuning assignment using the
+official IBM telecom-style customer churn dataset. It preserves a held-out test
+set, keeps all learned preprocessing inside a scikit-learn `Pipeline`, records a
+default Logistic Regression baseline, searches broadly with
+`RandomizedSearchCV`, refines with `GridSearchCV`, and inspects fold stability.
 
-## What to do next?
-
-Open the `main.py` file and start writing your code.
-
-Execute your code by typing the following command on your terminal:
+## Run
 
 ```bash
-$ python main.py
+uv sync
+uv run python scripts/train.py
+uv run pytest -q
 ```
 
-You can create and include as many python files (a.k.a. modules) as you want using the import statements.
+The reproducible notebook is [`notebooks/streamloop_churn_tuning.ipynb`](notebooks/streamloop_churn_tuning.ipynb).
+The decision record is [`tuning_report.md`](tuning_report.md), and machine-readable
+evidence is under [`artifacts/`](artifacts/).
 
-## Requirements
+## Leakage and test-set contract
 
-Make sure you have Python installed in your computer. We strongly recommend [installing Python through Pyenv ](https://4geeks.com/how-to/what-is-pyenv-and-how-to-install-pyenv) to avoid version conflicts in the future.
-
-### Contributors
-
-This template was built as part of the [4Geeks Python Resources](https://4geeks.com/technology/python) for learning at [4Geeks.com](https://4geeks.com) by [Alejandro Sanchez](https://twitter.com/alesanchezr) and [many other contributors](https://github.com/4GeeksAcademy/python-hello/graphs/contributors).
+- Schema normalization converts blank `TotalCharges` values to missing before
+  the split; it does not learn from data.
+- Imputation, scaling, and one-hot encoding live inside the model pipeline and
+  are fitted independently inside every cross-validation fold.
+- Random and grid searches receive training data only.
+- The held-out test set is evaluated exactly twice: once for the default
+  baseline and once for the final refitted tuned estimator.
+- F2 is the search metric because missing a real churner costs StreamLoop more
+  than sending an unnecessary retention offer. Unlike pure recall, F2 still
+  penalizes a degenerate model that predicts every customer will churn.
