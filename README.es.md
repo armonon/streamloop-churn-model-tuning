@@ -1,23 +1,17 @@
-# Python Hello
+# StreamLoop — ajuste del modelo de abandono
 
-El boilerplate más básico para comenzar un proyecto en Python en 4Geeks. Inicia tu primer proyecto en Python desde cero.
-
-## ¿Qué hacer a continuación?
-
-Abre el archivo `main.py` y comienza a escribir tu código.
-
-Ejecuta tu código escribiendo el siguiente comando en tu terminal:
+Este proyecto completa el ejercicio de optimización de hiperparámetros con el
+conjunto de datos oficial de clientes. Mantiene un test final separado, incluye
+todo el preprocesamiento aprendido dentro de un `Pipeline`, registra una línea
+base con los parámetros predeterminados y ejecuta primero `RandomizedSearchCV`
+y después `GridSearchCV`.
 
 ```bash
-$ python main.py
+uv sync
+uv run python scripts/train.py
+uv run pytest -q
 ```
 
-Puedes crear e incluir tantos archivos de Python (también conocidos como módulos) como desees utilizando las declaraciones de importación.
-
-## Requisitos
-
-Asegúrate de tener Python instalado en tu computadora. Te recomendamos encarecidamente [instalar Python a través de Pyenv](https://4geeks.com/es/how-to/que-es-pyenv-y-como-instalar-pyenv) para evitar conflictos de versiones en el futuro.
-
-### Contribuidores
-
-Esta plantilla fue creada como parte de los [Recursos de Python de 4Geeks](https://4geeks.com/es/technology/python) para el aprendizaje en [4Geeks.com](https://4geeks.com) por [Alejandro Sanchez](https://twitter.com/alesanchezr) y [muchos otros contribuyentes](https://github.com/4GeeksAcademy/python-hello/graphs/contributors).
+La métrica principal es F2: da más peso al recall porque no detectar a un
+cliente que abandona cuesta más que enviar una oferta innecesaria, pero también
+penaliza un clasificador degenerado que predice abandono para todos.
